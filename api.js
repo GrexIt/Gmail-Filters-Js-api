@@ -1,7 +1,7 @@
 
-var Gmail_Filter_Api = function(){
+var Gmail_Filter_Api = function(jQuery) {
 
-    this.set_gmail_params = function() {
+    this.set_gmail_params = function(userEmail) {
         var gmail_params = {}
 
         //Parse out Base Url
@@ -10,10 +10,7 @@ var Gmail_Filter_Api = function(){
         m = matches[0]
         gmail_params['GMAIL_BASE_URL'] = m.substring(0, m.length-1) + '?'
 
-        //Parse out gmailchat value
-        var regex = new RegExp("gmailchat=(.+?)/(.+?);")
-        var matches = document.cookie.match(regex)
-        gmail_params['USER_EMAIL'] = matches[1]
+        gmail_params['USER_EMAIL'] = userEmail
 
         //Parse out gmail_at value
         var regex = new RegExp("GMAIL_AT=(.+?);")
@@ -82,13 +79,13 @@ var Gmail_Filter_Api = function(){
        urlsend = baseurl + "ik=" + this.gmail_params.GMAIL_IK + "&at=" + this.gmail_params.GMAIL_AT + "&view=up&act=df&pcd=1&mb=0&rt=c";
        postdata = "tfi=" + filter_id;
 
-       $.post(urlsend, postdata, function(data){
+       jQuery.post(urlsend, postdata, function(data){
             var gmailresponse = data;
             console.log(data);
        });
     };
 
-    this.createGmailFilter = function(keyValues) {
+    this.createGmailFilter = function(keyValues){
        thisobj = this;
        baseurl = this.gmail_params.GMAIL_BASE_URL;
        gmail_filter_url = baseurl + "ik=" + this.gmail_params.GMAIL_IK + "&at=" + this.gmail_params.GMAIL_AT + "&view=up&act=cf&pcd=1&mb=0&rt=c"
@@ -111,6 +108,9 @@ var Gmail_Filter_Api = function(){
                     break;
                 case "skipinbox":
                     postdata = postdata + "&cf2_cat=true";
+                    break;
+                case "marknotspam":
+                    postdata = postdata + "&cf2_ns=true";
                     break;
                 case "labelas":
                     postdata = postdata + "&cf2_sel=" + keyValues[key];
